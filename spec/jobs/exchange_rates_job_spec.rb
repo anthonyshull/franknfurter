@@ -4,14 +4,23 @@ RSpec.describe ExchangeRatesJob do
   describe "#perform" do
     before do
       # Mock the HTTP response to return rates for all currencies except the base
-      allow(Net::HTTP).to receive(:get_response) do |uri|
-        base_currency = uri.to_s.match(/base=(\w+)/)[1]
+      allow(Net::HTTP).to receive(:start) do |host, port, **options, &block|
+        uri = URI("http://#{host}:#{port}")
+        base_currency = nil
+        
+        # Create a mock HTTP object that will be yielded to the block
+        mock_http = double("Net::HTTP")
+        allow(mock_http).to receive(:get) do |request_uri|
+          base_currency = request_uri.match(/base=(\w+)/)[1]
 
-        rates = Currency.where.not(code: base_currency).pluck(:code).each_with_object({}) do |code, hash|
-          hash[code] = rand(0.5..2.0).round(4)
+          rates = Currency.where.not(code: base_currency).pluck(:code).each_with_object({}) do |code, hash|
+            hash[code] = rand(0.5..2.0).round(4)
+          end
+
+          instance_double(Net::HTTPResponse, body: { "rates" => rates }.to_json)
         end
-
-        instance_double(Net::HTTPResponse, body: { "rates" => rates }.to_json)
+        
+        block.call(mock_http)
       end
     end
 
@@ -23,7 +32,7 @@ RSpec.describe ExchangeRatesJob do
       }.to change(ExchangeRate, :count)
 
       # Should make one request per currency
-      expect(Net::HTTP).to have_received(:get_response).at_least(currency_count).times
+      expect(Net::HTTP).to have_received(:start).at_least(currency_count).times
     end
 
     it "skips currency pairs where right < left" do

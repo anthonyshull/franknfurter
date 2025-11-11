@@ -4,11 +4,14 @@ require "net/http"
 # Fetches exchange rates from the Frankfurter API and stores them in the database.
 #
 # This job runs on a recurring schedule to keep exchange rates up to date.
-# It fetches rates from the Frankfurter API service using the first currency
-# alphabetically as the base, then stores all rates in the database.
+# It fetches rates from the Frankfurter API service using each currency
+# as the base, then stores all rates in the database using pessimistic locking.
 #
 # The job is idempotent - running it multiple times for the same date will update
 # existing records rather than creating duplicates.
+#
+# HTTP requests have a 3-second timeout to prevent hanging.
+# Only currencies that exist in the database are stored.
 #
 # The job includes automatic retries for common failure scenarios:
 # - Database deadlocks: 3 attempts with 5 second wait

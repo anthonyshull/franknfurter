@@ -1,3 +1,17 @@
+# Serializes Conversion records to JSON for API responses.
+#
+# Returns all conversion attributes including both source and target amounts.
+#
+# @example Serialized output
+#   {
+#     "id": 1,
+#     "source_currency_code": "USD",
+#     "target_currency_code": "EUR",
+#     "source_amount": "100.00",
+#     "target_amount": "85.00",
+#     "created_at": "2025-11-11T12:00:00Z",
+#     "updated_at": "2025-11-11T12:00:00Z"
+#   }
 class ConversionBlueprint < Blueprinter::Base
   identifier :id
 

@@ -2,11 +2,12 @@
 #
 # Tracks conversion requests between two currencies with source and target amounts.
 # Unlike ExchangeRate, conversions are directional (source -> target).
+# An index on created_at enables efficient retrieval of recent conversions.
 #
 # @attr [String] source_currency_code The 3-character code of the source currency
 # @attr [String] target_currency_code The 3-character code of the target currency
 # @attr [Decimal] source_amount The amount in the source currency (must be greater than 0)
-# @attr [Decimal] target_amount The converted amount in the target currency
+# @attr [Decimal] target_amount The converted amount in the target currency (must be greater than 0)
 # @attr [DateTime] created_at When the conversion was created
 # @attr [DateTime] updated_at When the conversion was last updated
 class Conversion < ApplicationRecord

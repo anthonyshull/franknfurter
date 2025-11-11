@@ -18,7 +18,7 @@ class ConversionsService
     # @param target_currency_code [String] The 3-character code of the target currency
     # @param amount [Numeric] The amount to convert
     # @param date [Date] The date to use for the exchange rate (defaults to today)
-    # @return [Float] The converted amount rounded to 2 decimal places
+    # @return [BigDecimal] The converted amount rounded to 2 decimal places
     # @return [nil] If no exchange rate is found for the given date
     #
     # @example Convert with a specific date
@@ -39,7 +39,7 @@ class ConversionsService
     private
 
     # Loads an exchange rate from cache or database.
-    # Cache expires after 1 hour.
+    # Cache expires after 1 hour with race condition protection.
     #
     # @param source_currency_code [String] The source currency code
     # @param target_currency_code [String] The target currency code
