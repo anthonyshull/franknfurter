@@ -312,6 +312,7 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
+    yard (0.9.37)
     zeitwerk (2.7.3)
 
 PLATFORMS
@@ -346,6 +347,7 @@ DEPENDENCIES
   solid_cache (= 1.0.10)
   solid_queue (= 1.2.4)
   thor (= 1.4.0)
+  yard
 
 BUNDLED WITH
    2.7.2

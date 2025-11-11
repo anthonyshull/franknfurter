@@ -20,6 +20,7 @@ group :development, :test do
   gem "rubocop-performance", "1.26.1", require: false
   gem "rubocop-rails-omakase", "1.1.0", require: false
   gem "rubocop-rspec", "3.7.0", require: false
+  gem "yard", "0.9.37", require: false
 end
 
 group :test do
