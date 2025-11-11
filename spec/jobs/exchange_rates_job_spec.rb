@@ -7,9 +7,10 @@ RSpec.describe ExchangeRatesJob do
       allow(Net::HTTP).to receive(:start) do |host, port, **options, &block|
         uri = URI("http://#{host}:#{port}")
         base_currency = nil
-        
+
         # Create a mock HTTP object that will be yielded to the block
-        mock_http = double("Net::HTTP")
+        mock_http = instance_double(Net::HTTP)
+
         allow(mock_http).to receive(:get) do |request_uri|
           base_currency = request_uri.match(/base=(\w+)/)[1]
 
@@ -19,7 +20,7 @@ RSpec.describe ExchangeRatesJob do
 
           instance_double(Net::HTTPResponse, body: { "rates" => rates }.to_json)
         end
-        
+
         block.call(mock_http)
       end
     end
