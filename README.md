@@ -5,8 +5,9 @@
 
 Frank N Furter is a currency conversion application with a [Rails](https://rubyonrails.org/) backend and [Alpine.js](https://alpinejs.dev/) frontend.
 
-Rails documentation can be viewed: https://anthonyshull.github.io/franknfurter/
-Backend test coverage is 100% and can be viewed: https://anthonyshull.github.io/franknfurter/coverage
+View the [generated documentation](https://anthonyshull.github.io/franknfurter/).
+
+Backend [test coverage](https://anthonyshull.github.io/franknfurter/coverage) is set to a minimum of 99%. 
 
 Static analysis, tests, and documentation generation are all run as [GitHub Actions](https://docs.github.com/en/actions).
 
