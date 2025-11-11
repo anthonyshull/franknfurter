@@ -16,11 +16,11 @@ require "net/http"
 # - Other errors: 1 attempt with 15 second wait
 #
 # @example Run the job manually for today
-#   FetchExchangeRates.perform_now
+#   ExchangeRatesJob.perform_now
 #
 # @example Run the job for a specific date
-#   FetchExchangeRates.perform_now(date: Date.new(2025, 1, 1))
-class FetchExchangeRates < ActiveJob::Base
+#   ExchangeRatesJob.perform_now(date: Date.new(2025, 1, 1))
+class ExchangeRatesJob < ActiveJob::Base
   queue_as :default
 
   retry_on ActiveRecord::Deadlocked, wait: 5.seconds, attempts: 3
@@ -33,22 +33,28 @@ class FetchExchangeRates < ActiveJob::Base
   # @return [void]
   def perform(date: Date.today)
     base_url = "http://#{ENV['FRANKFURTER_HOST']}:#{ENV['FRANKFURTER_PORT']}"
-    left_currency_code = Currency.order(:code).limit(1).pluck(:code).first
 
-    uri = URI("#{base_url}/v1/#{date}?base=#{left_currency_code}")
+    Currency.find_each do |currency|
+      left_currency_code = currency.code
 
-    response = Net::HTTP.get_response(uri)
-    data = JSON.parse(response.body)
+      uri = URI("#{base_url}/v1/#{date}?base=#{left_currency_code}")
 
-    data["rates"].each do |right_currency_code, rate|
-      Rails.logger.info "Storing rate: #{left_currency_code} -> #{right_currency_code} = #{rate}"
+      response = Net::HTTP.get_response(uri)
+      data = JSON.parse(response.body)
 
-      ExchangeRate.find_or_create_by(
-        left_currency_code: left_currency_code,
-        right_currency_code: right_currency_code,
-        date: date
-      ) do |exchange_rate|
-        exchange_rate.rate = rate
+      data["rates"].each do |right_currency_code, rate|
+        # Skip if right currency is less than left (we'll fetch it when that currency is the base)
+        next if right_currency_code < left_currency_code
+
+        Rails.logger.info "Storing rate: #{left_currency_code} -> #{right_currency_code} = #{rate}"
+
+        ExchangeRate.find_or_create_by(
+          left_currency_code: left_currency_code,
+          right_currency_code: right_currency_code,
+          date: date
+        ) do |exchange_rate|
+          exchange_rate.rate = rate
+        end
       end
     end
   end
