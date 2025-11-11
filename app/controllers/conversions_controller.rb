@@ -31,8 +31,6 @@ class ConversionsController < ActionController::API
     else
       render json: { errors: conversion.errors.full_messages }, status: :unprocessable_entity
     end
-  rescue ActiveRecord::RecordNotFound => e
-    render json: { error: "Currency not found: #{e.message}" }, status: :not_found
   rescue StandardError => e
     render json: { error: "Conversion failed: #{e.message}" }, status: :bad_request
   end

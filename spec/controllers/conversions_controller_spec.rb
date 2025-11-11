@@ -61,27 +61,15 @@ RSpec.describe ConversionsController, type: :controller do
       end
     end
 
-    context "when ConversionsService returns nil" do
+    context "when an error is raised" do
       before do
-        allow(ConversionsService).to receive(:convert).and_return(nil)
+        allow(ConversionsService).to receive(:convert).and_raise(StandardError)
       end
 
-      it "returns 422 status" do
+      it "returns 400 status" do
         post :create, params: params
 
-        expect(response).to have_http_status(:unprocessable_content)
-      end
-    end
-
-    context "when currency not found" do
-      before do
-        allow(ConversionsService).to receive(:convert).and_raise(ActiveRecord::RecordNotFound)
-      end
-
-      it "returns 404 status" do
-        post :create, params: params
-
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:bad_request)
       end
     end
   end
