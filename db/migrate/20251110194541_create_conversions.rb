@@ -12,5 +12,7 @@ class CreateConversions < ActiveRecord::Migration[8.1]
 
     add_foreign_key :conversions, :currencies, column: :source_currency_code, primary_key: :code
     add_foreign_key :conversions, :currencies, column: :target_currency_code, primary_key: :code
+
+    add_index :conversions, :created_at
   end
 end

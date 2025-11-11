@@ -37,7 +37,10 @@ class ExchangeRatesJob < ActiveJob::Base
     currency_codes.each do |left_currency_code|
       uri = URI("#{base_url}/v1/#{date}?base=#{left_currency_code}")
 
-      response = Net::HTTP.get_response(uri)
+      response = Net::HTTP.start(uri.host, uri.port, read_timeout: 3, open_timeout: 3) do |http|
+        http.get(uri.request_uri)
+      end
+
       data = JSON.parse(response.body)
 
       data["rates"].each do |right_currency_code, rate|

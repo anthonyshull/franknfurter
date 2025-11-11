@@ -33,7 +33,7 @@ class ConversionsService
 
       return nil if rate.nil?
 
-      (amount * rate).round(2)
+      (BigDecimal(amount.to_s) * BigDecimal(rate.to_s)).round(2)
     end
 
     private
