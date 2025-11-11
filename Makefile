@@ -1,18 +1,20 @@
 .PHONY: setup up watch down restart shell console bundle-install db-migrate db-rollback db-reset db-seed rspec rubocop rubocop-fix audit
 
 # Docker compose command
-COMPOSE = docker-compose -f deploy/docker-compose.yml
+COMPOSE = docker compose
 EXEC = $(COMPOSE) exec api
 
 # Setup project for first time
 setup:
 	$(COMPOSE) build
-	$(COMPOSE) up -d
-	$(EXEC) bundle install
-	$(EXEC) bundle exec rails db:create
-	$(EXEC) bundle exec rails db:migrate
-	$(EXEC) bundle exec rails db:seed
-	@echo "Setup complete! Run 'make down' and then 'make up' to start fresh."
+	$(COMPOSE) up -d db
+	@echo "Waiting for database to be ready..."
+	@sleep 5
+	$(COMPOSE) run --rm api bundle exec rails db:create
+	$(COMPOSE) run --rm api bundle exec rails db:schema:load
+	$(COMPOSE) run --rm api bundle exec rails db:schema:load:queue
+	$(COMPOSE) run --rm api bundle exec rails db:seed
+	@echo "Setup complete!"
 
 # Start services
 up:

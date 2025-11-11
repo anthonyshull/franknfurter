@@ -1,7 +1,7 @@
 services:
   api:
     build:
-      context: ..
+      context: .
       dockerfile: deploy/rails/Dockerfile
     command: bundle exec rails server -b 0.0.0.0
     depends_on:
@@ -23,7 +23,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ..:/app
+      - .:/app
 
   db:
     image: postgres:16
@@ -49,7 +49,7 @@ services:
 
   solid_queue:
     build:
-      context: ..
+      context: .
       dockerfile: deploy/rails/Dockerfile
     command: bundle exec rake solid_queue:start
     depends_on:
@@ -67,11 +67,11 @@ services:
       franknfurter:
         ipv4_address: 10.0.0.13
     volumes:
-      - ..:/app
+      - .:/app
 
   ui:
     build:
-      context: ..
+      context: .
       dockerfile: deploy/ui/Dockerfile
     networks:
       franknfurter:
@@ -79,7 +79,7 @@ services:
     ports:
       - "3001:3001"
     volumes:
-      - ../ui:/app
+      - ./ui:/app
       - /app/node_modules
 
 volumes:

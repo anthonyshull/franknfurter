@@ -9,21 +9,22 @@ class ConversionsController < ActionController::API
   #   {
   #     "source_currency_code": "USD",
   #     "target_currency_code": "EUR",
-  #     "amount": 100
+  #     "source_amount": 100
   #   }
   #
   # POST /convert
   def create
-    converted_amount = ConversionsService.convert(
+    target_amount = ConversionsService.convert(
       source_currency_code: params[:source_currency_code],
       target_currency_code: params[:target_currency_code],
-      amount: params[:amount].to_f
+      amount: params[:source_amount].to_f
     )
 
     conversion = Conversion.new(
       source_currency_code: params[:source_currency_code],
       target_currency_code: params[:target_currency_code],
-      amount: converted_amount
+      source_amount: params[:source_amount].to_f,
+      target_amount: target_amount
     )
 
     if conversion.save

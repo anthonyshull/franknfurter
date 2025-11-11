@@ -7,7 +7,7 @@ RSpec.describe ConversionsController, type: :controller do
       {
         source_currency_code: exchange_rate.left_currency_code,
         target_currency_code: exchange_rate.right_currency_code,
-        amount: rand(1..1000)
+        source_amount: rand(1..1000)
       }
     end
 

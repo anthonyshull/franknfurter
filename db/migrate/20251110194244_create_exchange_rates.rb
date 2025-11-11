@@ -1,5 +1,5 @@
 class CreateExchangeRates < ActiveRecord::Migration[8.1]
-  def change
+  def up
     create_table :exchange_rates do |t|
       t.string :left_currency_code, null: false, limit: 3
       t.string :right_currency_code, null: false, limit: 3
@@ -26,5 +26,9 @@ class CreateExchangeRates < ActiveRecord::Migration[8.1]
       ADD CONSTRAINT left_less_than_right
       CHECK (left_currency_code < right_currency_code)
     SQL
+  end
+
+  def down
+    drop_table :exchange_rates
   end
 end
