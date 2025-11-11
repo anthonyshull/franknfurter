@@ -1,13 +1,20 @@
-name: CI
+name: Tests and Docs
 
 on:
   push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
     services:
@@ -48,40 +55,32 @@ jobs:
           bundle exec rails db:schema:load
           bundle exec rails db:schema:load:queue
 
-      - name: Run RSpec
+      - name: Run tests to generate coverage
         run: bundle exec rspec
 
-  rubocop:
-    runs-on: ubuntu-latest
+      - name: Generate documentation
+        run: bundle exec yard doc
 
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.4.7
-          bundler-cache: true
-
-      - name: Run RuboCop
-        run: bundle exec rubocop
-
-  security:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.4.7
-          bundler-cache: true
-
-      - name: Run Brakeman
-        run: bundle exec brakeman --no-pager
-
-      - name: Run Bundler Audit
+      - name: Copy coverage to docs
         run: |
-          bundle exec bundle-audit update
-          bundle exec bundle-audit check
+          mkdir -p doc/coverage
+          cp -r coverage/* doc/coverage/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './doc'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
