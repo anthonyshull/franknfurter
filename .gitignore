@@ -33,3 +33,7 @@
 
 # Ignore SimpleCov coverage results
 /coverage/
+
+# UI dependencies and build output
+/ui/node_modules/
+/ui/dist/

@@ -17,7 +17,7 @@ services:
       FRANKFURTER_PORT: 8080
     networks:
       franknfurter:
-        ipv4_address: 10.0.0.11
+        ipv4_address: 10.0.0.10
     ports:
       - "3000:3000"
     stdin_open: true
@@ -33,7 +33,7 @@ services:
       POSTGRES_USER: username
     networks:
       franknfurter:
-        ipv4_address: 10.0.0.12
+        ipv4_address: 10.0.0.11
     ports:
       - "5432:5432"
     volumes:
@@ -43,7 +43,7 @@ services:
     image: lineofflight/frankfurter
     networks:
       franknfurter:
-        ipv4_address: 10.0.0.13
+        ipv4_address: 10.0.0.12
     ports:
       - "8080:8080"
 
@@ -65,9 +65,22 @@ services:
       FRANKFURTER_PORT: 8080
     networks:
       franknfurter:
-        ipv4_address: 10.0.0.14
+        ipv4_address: 10.0.0.13
     volumes:
       - ..:/app
+
+  ui:
+    build:
+      context: ..
+      dockerfile: deploy/ui/Dockerfile
+    networks:
+      franknfurter:
+        ipv4_address: 10.0.0.14
+    ports:
+      - "3001:3001"
+    volumes:
+      - ../ui:/app
+      - /app/node_modules
 
 volumes:
   postgres_data:
