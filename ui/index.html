@@ -106,9 +106,10 @@
               <tr class="bg-gray-100">
                 <th class="p-2 text-left">Source</th>
                 <th class="p-2 text-left">Source Amount</th>
+                <th class="p-2 text-left">Rate</th>
                 <th class="p-2 text-left">Target</th>
                 <th class="p-2 text-left">Target Amount</th>
-                <th class="p-2 text-left">Time</th>
+                <th class="p-2 text-left">Time Converted</th>
               </tr>
             </thead>
             <tbody>
@@ -116,6 +117,7 @@
                 <tr :class="{ 'bg-green-50': conv.id === latestConversionId }">
                   <td class="p-2" x-text="conv.source_currency_code"></td>
                   <td class="p-2" x-text="parseFloat(conv.source_amount).toFixed(2)"></td>
+                  <td class="p-2" x-text="(parseFloat(conv.target_amount) / parseFloat(conv.source_amount)).toFixed(2)"></td>
                   <td class="p-2" x-text="conv.target_currency_code"></td>
                   <td class="p-2" x-text="parseFloat(conv.target_amount).toFixed(2)"></td>
                   <td class="p-2" x-text="formatDate(conv.created_at)"></td>
