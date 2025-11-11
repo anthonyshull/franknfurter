@@ -1,6 +1,25 @@
 require "json"
 require "net/http"
 
+# Fetches exchange rates from the Frankfurter API and stores them in the database.
+#
+# This job runs on a recurring schedule to keep exchange rates up to date.
+# It fetches rates from the Frankfurter API service using the first currency
+# alphabetically as the base, then stores all rates in the database.
+#
+# The job is idempotent - running it multiple times for the same date will update
+# existing records rather than creating duplicates.
+#
+# The job includes automatic retries for common failure scenarios:
+# - Database deadlocks: 3 attempts with 5 second wait
+# - HTTP errors: 3 attempts with 5 second wait
+# - Other errors: 1 attempt with 15 second wait
+#
+# @example Run the job manually for today
+#   FetchExchangeRates.perform_now
+#
+# @example Run the job for a specific date
+#   FetchExchangeRates.perform_now(date: Date.new(2025, 1, 1))
 class FetchExchangeRates < ActiveJob::Base
   queue_as :default
 
@@ -8,6 +27,10 @@ class FetchExchangeRates < ActiveJob::Base
   retry_on Net::HTTPError, wait: 5.seconds, attempts: 3
   retry_on StandardError, wait: 15.seconds, attempts: 1
 
+  # Fetches and stores exchange rates for the specified date.
+  #
+  # @param date [Date] The date to fetch rates for (defaults to today)
+  # @return [void]
   def perform(date: Date.today)
     base_url = "http://#{ENV['FRANKFURTER_HOST']}:#{ENV['FRANKFURTER_PORT']}"
     left_currency_code = Currency.order(:code).limit(1).pluck(:code).first

@@ -1,41 +1,60 @@
 module Services
+  # Service for converting amounts between currencies using stored exchange rates.
+  #
+  # This service looks up exchange rates from the database (with caching) and performs
+  # currency conversions. It handles bidirectional conversions by inverting rates when needed.
+  #
+  # @example Convert 100 USD to EUR
+  #   Services::Conversions.convert(
+  #     source_currency_code: 'USD',
+  #     target_currency_code: 'EUR',
+  #     amount: 100
+  #   )
+  #   # => 85.0 (or whatever the current rate converts to)
   class Conversions
     class << self
-      def convert(source_currency:, target_currency:, amount:, date: Date.today)
-        rate = load_exchange_rate(source_currency, target_currency, date)
+      # Converts an amount from one currency to another.
+      #
+      # @param source_currency_code [String] The 3-character code of the source currency
+      # @param target_currency_code [String] The 3-character code of the target currency
+      # @param amount [Numeric] The amount to convert
+      # @param date [Date] The date to use for the exchange rate (defaults to today)
+      # @return [Float] The converted amount rounded to 2 decimal places
+      # @return [nil] If no exchange rate is found for the given date
+      #
+      # @example Convert with a specific date
+      #   Services::Conversions.convert(
+      #     source_currency_code: 'GBP',
+      #     target_currency_code: 'JPY',
+      #     amount: 50,
+      #     date: Date.new(2025, 1, 1)
+      #   )
+      def convert(source_currency_code:, target_currency_code:, amount:, date: Date.today)
+        rate = load_exchange_rate(source_currency_code, target_currency_code, date)
 
         (amount * rate).round(2)
       end
 
       private
 
-      def load_exchange_rate(source_currency, target_currency, date)
-        cache_key = "db/exchange_rate/#{source_currency}/#{target_currency}/#{date}"
+      # Loads an exchange rate from cache or database.
+      # Cache expires after 1 hour.
+      #
+      # @param source_currency_code [String] The source currency code
+      # @param target_currency_code [String] The target currency code
+      # @param date [Date] The date for the exchange rate
+      # @return [Float, nil] The exchange rate or nil if not found
+      def load_exchange_rate(source_currency_code, target_currency_code, date)
+        cache_key = "db/exchange_rate/#{source_currency_code}/#{target_currency_code}/#{date}"
 
         Rails.cache.fetch(cache_key, expires_in: 1.hour) do
           Rails.logger.info "Cache miss on #{cache_key}"
 
-          find_exchange_rate(source_currency, target_currency, date)
-        end
-      end
-
-      def find_exchange_rate(source_currency, target_currency, date)
-        currencies = [ source_currency, target_currency ].sort
-
-        exchange_rate = ExchangeRate.find_by(
-          left_currency_code: currencies.first,
-          right_currency_code: currencies.last,
-          date: date
-        )
-
-        return nil unless exchange_rate
-
-        # If the rate is stored in the order we need, use it directly
-        # Otherwise, invert it
-        if source_currency == exchange_rate.left_currency_code
-          exchange_rate.rate
-        else
-          1.0 / exchange_rate.rate
+          ExchangeRate.rate_for(
+            source_currency_code: source_currency_code,
+            target_currency_code: target_currency_code,
+            date: date
+          )
         end
       end
     end

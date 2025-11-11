@@ -48,10 +48,6 @@ db-reset:
 db-seed:
 	$(EXEC) rails db:seed
 
-# Run tests
-test:
-	$(EXEC) rails test
-
 # Run rspec tests
 rspec:
 	$(EXEC) bundle exec rspec
