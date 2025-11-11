@@ -28,12 +28,13 @@ class ExchangeRatesJob < ActiveJob::Base
   #
   # @return [void]
   def perform
-    base_url = "http://#{ENV['FRANKFURTER_HOST']}:#{ENV['FRANKFURTER_PORT']}"
+    base_url = "http://#{ENV.fetch('FRANKFURTER_HOST', 'frankfurter')}:#{ENV.fetch('FRANKFURTER_PORT', '8080')}"
     date = Date.today
 
-    Currency.find_each do |currency|
-      left_currency_code = currency.code
+    # Load all currency codes once to avoid N+1 queries
+    currency_codes = Currency.pluck(:code)
 
+    currency_codes.each do |left_currency_code|
       uri = URI("#{base_url}/v1/#{date}?base=#{left_currency_code}")
 
       response = Net::HTTP.get_response(uri)
@@ -43,14 +44,20 @@ class ExchangeRatesJob < ActiveJob::Base
         # Skip if right currency is less than left (we'll fetch it when that currency is the base)
         next if right_currency_code < left_currency_code
 
+        # Skip if right currency doesn't exist in our database
+        next unless currency_codes.include?(right_currency_code)
+
         Rails.logger.info "Storing rate: #{left_currency_code} -> #{right_currency_code} = #{rate}"
 
-        ExchangeRate.find_or_create_by(
-          left_currency_code: left_currency_code,
-          right_currency_code: right_currency_code,
-          date: date
-        ) do |exchange_rate|
+        ActiveRecord::Base.transaction do
+          exchange_rate = ExchangeRate.lock.find_or_initialize_by(
+            left_currency_code: left_currency_code,
+            right_currency_code: right_currency_code,
+            date: date
+          )
+
           exchange_rate.rate = rate
+          exchange_rate.save!
         end
       end
     end

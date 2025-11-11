@@ -5,8 +5,8 @@ Rails.application.config.after_initialize do
     Rails.application.load_seed
   end
 
-  # Queue initial exchange rates fetch (only if tables exist)
-  if ActiveRecord::Base.connection.table_exists?("solid_queue_jobs")
+  # Queue initial exchange rates fetch (only if tables exist and in development)
+  if Rails.env.development? && ActiveRecord::Base.connection.table_exists?("solid_queue_jobs")
     Rails.logger.info "Queueing initial exchange rates fetch..."
     ExchangeRatesJob.set(wait: 15.seconds).perform_later
   end

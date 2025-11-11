@@ -48,7 +48,7 @@ class ConversionsService
     def load_exchange_rate(source_currency_code, target_currency_code, date)
       cache_key = "db/exchange_rate/#{source_currency_code}/#{target_currency_code}/#{date}"
 
-      Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+      Rails.cache.fetch(cache_key, expires_in: 1.hour, race_condition_ttl: 10.seconds) do
         Rails.logger.info "Cache miss on #{cache_key}"
 
         ExchangeRate.rate_for(
