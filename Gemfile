@@ -7,7 +7,8 @@ gem "puma", "7.1.0"
 gem "rack-cors", "3.0.0"
 gem "rails", "8.1.1"
 gem "solid_cache", "1.0.10"
-gem "solid_queue", "1.1.0"
+gem "solid_queue", "1.2.4"
+gem "thor", "1.4.0"
 
 group :development, :test do
   gem "brakeman", "7.1.1", require: false
