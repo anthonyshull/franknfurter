@@ -1,11 +1,11 @@
 require "simplecov"
 SimpleCov.start "rails" do
-  add_filter "/spec/"
   add_filter "/config/"
   add_filter "/db/"
+  add_filter "/spec/"
   add_filter "/vendor/"
 
-  minimum_coverage 90
+  minimum_coverage 99
 end
 
 RSpec.configure do |config|
