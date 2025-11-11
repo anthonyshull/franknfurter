@@ -15,11 +15,8 @@ require "net/http"
 # - HTTP errors: 3 attempts with 5 second wait
 # - Other errors: 1 attempt with 15 second wait
 #
-# @example Run the job manually for today
+# @example Run the job manually
 #   ExchangeRatesJob.perform_now
-#
-# @example Run the job for a specific date
-#   ExchangeRatesJob.perform_now(date: Date.new(2025, 1, 1))
 class ExchangeRatesJob < ActiveJob::Base
   queue_as :default
 
@@ -27,12 +24,12 @@ class ExchangeRatesJob < ActiveJob::Base
   retry_on Net::HTTPError, wait: 5.seconds, attempts: 3
   retry_on StandardError, wait: 15.seconds, attempts: 1
 
-  # Fetches and stores exchange rates for the specified date.
+  # Fetches and stores exchange rates for today.
   #
-  # @param date [Date] The date to fetch rates for (defaults to today)
   # @return [void]
-  def perform(date: Date.today)
+  def perform
     base_url = "http://#{ENV['FRANKFURTER_HOST']}:#{ENV['FRANKFURTER_PORT']}"
+    date = Date.today
 
     Currency.find_each do |currency|
       left_currency_code = currency.code

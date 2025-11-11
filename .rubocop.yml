@@ -17,4 +17,13 @@ AllCops:
     - 'vendor/**/*'
 
 RSpec/ExampleLength:
-  Max: 10
+  Max: 20
+
+RSpec/MultipleExpectations:
+  Max: 5
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
