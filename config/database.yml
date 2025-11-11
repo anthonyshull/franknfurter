@@ -1,0 +1,34 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  primary:
+    <<: *default
+    database: franknfurter_development
+    host: <%= ENV.fetch("DATABASE_HOST") { "localhost" } %>
+    username: <%= ENV.fetch("DATABASE_USERNAME") { "username" } %>
+    password: <%= ENV.fetch("DATABASE_PASSWORD") { "password" } %>
+  queue:
+    <<: *default
+    database: franknfurter_development
+    host: <%= ENV.fetch("DATABASE_HOST") { "localhost" } %>
+    username: <%= ENV.fetch("DATABASE_USERNAME") { "username" } %>
+    password: <%= ENV.fetch("DATABASE_PASSWORD") { "password" } %>
+    migrations_paths: db/queue_migrate
+
+test:
+  primary:
+    <<: *default
+    database: franknfurter_test
+    host: <%= ENV.fetch("DATABASE_HOST") { "localhost" } %>
+    username: <%= ENV.fetch("DATABASE_USERNAME") { "username" } %>
+    password: <%= ENV.fetch("DATABASE_PASSWORD") { "password" } %>
+  queue:
+    <<: *default
+    database: franknfurter_test
+    host: <%= ENV.fetch("DATABASE_HOST") { "localhost" } %>
+    username: <%= ENV.fetch("DATABASE_USERNAME") { "username" } %>
+    password: <%= ENV.fetch("DATABASE_PASSWORD") { "password" } %>
+    migrations_paths: db/queue_migrate

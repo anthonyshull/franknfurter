@@ -1,0 +1,4 @@
+development:
+  fetch_exchange_rates:
+    class: FetchExchangeRates
+    schedule: "* * * * *"
