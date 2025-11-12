@@ -7,8 +7,8 @@
 #     "id": 1,
 #     "source_currency_code": "USD",
 #     "target_currency_code": "EUR",
-#     "source_amount": "100.00",
-#     "target_amount": "85.00",
+#     "source_amount": 100.00,
+#     "target_amount": 85.00,
 #     "created_at": "2025-11-11T12:00:00Z",
 #     "updated_at": "2025-11-11T12:00:00Z"
 #   }
