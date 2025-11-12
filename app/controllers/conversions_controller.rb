@@ -8,7 +8,7 @@ class ConversionsController < ActionController::API
   # @example POST /convert
   #   {
   #     "source_currency_code": "USD",
-  #     "target_currency_code": "EUR",
+  #     "target_currency_code": "MXN",
   #     "source_amount": 100
   #   }
   #

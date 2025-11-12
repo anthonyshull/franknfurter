@@ -3,13 +3,13 @@
 # This service looks up exchange rates from the database (with caching) and performs
 # currency conversions. It handles bidirectional conversions by inverting rates when needed.
 #
-# @example Convert 100 USD to EUR
+# @example Convert 100 MXN to USD
 #   ConversionsService.convert(
-#     source_currency_code: 'USD',
-#     target_currency_code: 'EUR',
+#     source_currency_code: "MXN",
+#     target_currency_code: "USD",
 #     amount: 100
 #   )
-#   # => 85.00 (or whatever the current rate converts to)
+#   # => 5.00 (or whatever the current rate converts to)
 class ConversionsService
   class << self
     # Converts an amount from one currency to another.
@@ -23,8 +23,8 @@ class ConversionsService
     #
     # @example Convert with a specific date
     #   ConversionsService.convert(
-    #     source_currency_code: 'GBP',
-    #     target_currency_code: 'JPY',
+    #     source_currency_code: "MXN",
+    #     target_currency_code: "USD",
     #     amount: 50,
     #     date: Date.new(2025, 1, 1)
     #   )

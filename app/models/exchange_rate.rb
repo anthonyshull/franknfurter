@@ -8,12 +8,12 @@
 #
 # @example Create a rate (will be normalized automatically)
 #   ExchangeRate.create!(
-#     left_currency_code: 'USD',
-#     right_currency_code: 'EUR',
+#     left_currency_code: "MXN",
+#     right_currency_code: "USD",
 #     date: Date.today,
-#     rate: 0.85
+#     rate: 0.05
 #   )
-#   # If USD > EUR alphabetically, it will swap to EUR/USD and invert the rate
+#   # If USD > MXN alphabetically, it will swap to MXN/USD and invert the rate
 #
 # @attr [String] left_currency_code The alphabetically first currency code (3 characters)
 # @attr [String] right_currency_code The alphabetically second currency code (3 characters)
@@ -54,13 +54,13 @@ class ExchangeRate < ApplicationRecord
   # @param date [Date] The date for the exchange rate
   # @return [Numeric, nil] The exchange rate from source to target, or nil if not found
   #
-  # @example Get rate for USD -> EUR
-  #   ExchangeRate.rate_for(source_currency_code: 'USD', target_currency_code: 'EUR', date: Date.today)
-  #   # => 0.85 (for example)
+  # @example Get rate for MXN -> USD
+  #   ExchangeRate.rate_for(source_currency_code: "MXN", target_currency_code: "USD", date: Date.today)
+  #   # => 0.05 (for example)
   #
-  # @example Get rate for EUR -> USD (automatically inverts)
-  #   ExchangeRate.rate_for(source_currency_code: 'EUR', target_currency_code: 'USD', date: Date.today)
-  #   # => 1.176 (inverse of 0.85)
+  # @example Get rate for USD -> MXN (automatically inverts)
+  #   ExchangeRate.rate_for(source_currency_code: "USD", target_currency_code: "MXN", date: Date.today)
+  #   # => 20.0 (inverse of 0.05)
   def self.rate_for(source_currency_code:, target_currency_code:, date:)
     currencies = [ source_currency_code, target_currency_code ].sort
 

@@ -1,6 +1,6 @@
 # Represents a currency used in exchange rates and conversions.
 #
-# This model uses the 3-character currency code (e.g., "USD", "EUR") as the primary key.
+# This model uses the 3-character currency code (e.g., "USD", "MXN") as the primary key.
 # Currencies cannot be deleted if they have associated exchange rates or conversions.
 #
 # @attr [String] code The 3-character ISO currency code (primary key)

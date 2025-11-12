@@ -2,7 +2,7 @@
 # Controller for listing available currency codes.
 #
 # @example GET /currencies
-#   ["EUR", "GBP", "USD", ...]
+#   ["MXN", "USD", ...]
 #
 # Returns a JSON array of currency codes, sorted alphabetically.
 class CurrenciesController < ActionController::API
