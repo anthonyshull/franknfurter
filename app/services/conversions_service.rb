@@ -44,7 +44,7 @@ class ConversionsService
     # @param source_currency_code [String] The source currency code
     # @param target_currency_code [String] The target currency code
     # @param date [Date] The date for the exchange rate
-    # @return [Float, nil] The exchange rate or nil if not found
+    # @return [Numeric, nil] The exchange rate or nil if not found
     def load_exchange_rate(source_currency_code, target_currency_code, date)
       cache_key = "db/exchange_rate/#{source_currency_code}/#{target_currency_code}/#{date}"
 

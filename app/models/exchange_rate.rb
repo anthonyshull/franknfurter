@@ -52,7 +52,7 @@ class ExchangeRate < ApplicationRecord
   # @param source_currency_code [String] The source currency code
   # @param target_currency_code [String] The target currency code
   # @param date [Date] The date for the exchange rate
-  # @return [Float, nil] The exchange rate from source to target, or nil if not found
+  # @return [Numeric, nil] The exchange rate from source to target, or nil if not found
   #
   # @example Get rate for USD -> EUR
   #   ExchangeRate.rate_for(source_currency_code: 'USD', target_currency_code: 'EUR', date: Date.today)
